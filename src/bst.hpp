@@ -40,6 +40,9 @@ private:
     Node<T> *root;
     // the number of nodes in the tree
     int node_count;
+    //Helper for the search method.
+    Node<T> *searchHelper(Node<T>, T);
+    
 };
 
 template<class T>
@@ -87,23 +90,145 @@ template<class T>
 template<class T>
 void BST<T>::insert(T new_data)
 {
-
+    Node<T> *current = root;
+    Node<T> *newNode = new Node<T>(new_data);
+    if (root == NULL){
+        root = newNode;
+    }
+    else{
+        while (current != NULL){
+            if (new_data < current -> get_data()){
+                if (current -> get_left() == NULL){
+                    current -> set_left(newNode);
+                    current = NULL;
+                }
+                else{
+                    current = current -> get_left();
+                }
+            }
+            else{
+                if (current -> get_right() == NULL){
+                    current -> set_right(newNode);
+                    current = NULL;
+                }
+                else{
+                    current = current -> get_right();
+                }
+            }
+        }
+    }
 }
 
 
 template<class T>
 Node<T> *BST<T>::search(T val)
 {
-
+   // Node<T> result = searchHelper(root, val);
+    //return result;
+    Node<T> *current = root;
+    while (current != NULL){
+        if (current -> get_data() == val){
+            return current;
+        }
+        else if (current -> get_data() < val){
+            current = current -> get_right();
+        }
+        else{
+            current = current -> get_left();
+        }
+    }
+    return NULL;
 }
 
+template<class T>
+Node<T> *BST<T>::searchHelper(Node<T> current, T searchValue){
+    if (current == NULL){
+        return NULL;
+    }
+    if (searchValue == current -> get_data()){
+        return current;
+    }
+    else if (searchValue < current){
+        searchHelper(current -> get_left(), searchValue);
+    }
+    else if (searchValue > current){
+        searchHelper(current -> get_right(), searchValue);
+    }
+}
 
 
 template<class T>
 void BST<T>::remove(T val)
 {
-
+    Node<T> *current = root;
+    Node<T> *prev;
+    while (current != NULL){
+        //A value is found.
+        if (current -> get_data() == val){
+            //Value is a leaf.
+            if (current -> get_left() == NULL && current -> get_right() == NULL){
+                //Value is root.
+                if (prev == NULL){
+                    root = NULL;
+                }
+                else if (prev -> get_left() == current){
+                    prev -> set_left(NULL);
+                }
+                else{
+                    prev -> set_right(NULL);
+                }
+            }
+            //Value has a left child.
+            else if (current -> get_left() != NULL && current -> get_right() == NULL){
+                //Value is root
+                if (prev == NULL){
+                    root = current -> get_left();
+                }
+                else if (prev -> get_left() == current){
+                    prev -> set_left(current -> get_left());
+                }
+                else{
+                    prev -> set_right(current -> get_left());
+                }
+            }
+            //Value has a right child.
+            else if (current -> get_left() == NULL && current -> get_right() != NULL){
+                //Value is root
+                if (prev == NULL){
+                    root = current -> get_right();
+                }
+                else if (prev -> get_left() == current){
+                    prev -> set_left(current -> get_right());
+                }
+                else{
+                    prev -> set_right(current -> get_right());
+                }
+            }
+            //Value has two children. Successor will be leftmost child of right subtree
+            else{
+                Node<T> *successor = current -> get_right();
+                while (successor -> get_left() != NULL){
+                    successor = successor -> get_left();
+                }
+                T successorData = successor -> get_data();
+                remove(successor -> get_data());
+                current -> set_data(successorData);
+            }
+            return;
+        }
+        //Search right.
+        else if (current -> get_data() < val){
+            prev = current;
+            current = current -> get_right();
+        }
+        //Search left.
+        else{
+            prev = current;
+            current = current -> get_left();
+        }
+    }
 }
+
 
 
 
