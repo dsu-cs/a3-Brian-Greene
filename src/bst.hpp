@@ -40,8 +40,12 @@ private:
     Node<T> *root;
     // the number of nodes in the tree
     int node_count;
-    //Helper for the search method.
-    Node<T> *searchHelper(Node<T>, T);
+    //Helper for the inorder method.
+    std::vector<T> *inorderHelper(Node<T>* node);
+    //Helper for the preorder method.
+    std::vector<T> *preorderHelper(Node<T>* node);
+    //Helper for the postorder method.
+    std::vector<T> *postorderHelper(Node<T>* node);
     
 };
 
@@ -66,24 +70,92 @@ template<class T>
  std::vector<T> * BST<T>::inorder()
 {
     std::vector<T> *vec = new std::vector<T>;
-
+    vec = inorderHelper(root);
     return vec;
 }
 
+template<class T>
+std::vector<T> * BST<T>::inorderHelper(Node<T>* node){
+    std::vector<T> *vec = new std::vector<T>;
+    std::vector<T> *templeft = new std::vector<T>;
+    std::vector<T> *tempright = new std::vector<T>;
+    if (node != NULL){
+        if (node -> get_left() != NULL){
+            templeft = inorderHelper(node -> get_left());
+            for (int i = 0; i < templeft -> size(); i++){
+                vec -> push_back(templeft[i]);
+            }
+        }
+        vec -> push_back(node);
+        if (node -> get_right() != NULL){
+            tempright = inorderHelper(node -> get_right());
+            for (int i = 0; i < tempright -> size(); i++){
+                vec -> push_back(tempright[i]);
+            }
+        }
+    }
+    return vec;
+}
 
 template<class T>
  std::vector<T> * BST<T>::preorder()
 {
     std::vector<T> *vec = new std::vector<T>;
+    vec = preorderHelper(root);
     return vec;
 }
 
+template<class T>
+std::vector<T> * BST<T>::preorderHelper(Node<T>* node){
+    std::vector<T> *vec = new std::vector<T>;
+    std::vector<T> *templeft = new std::vector<T>;
+    std::vector<T> *tempright = new std::vector<T>;
+    if (node != NULL){
+        vec -> push_back(node);
+        if (node -> get_left() != NULL){
+            templeft = preorderHelper(node -> get_left());
+            for (int i = 0; i < templeft -> size(); i++){
+                vec -> push_back(templeft[i]);
+            }
+        }
+        if (node -> get_right() != NULL){
+            tempright = preorderHelper(node -> get_right());
+            for (int i = 0; i < tempright -> size(); i++){
+                vec -> push_back(tempright[i]);
+            }
+        }
+    }
+    return vec;
+}
 
 template<class T>
  std::vector<T> * BST<T>::postorder()
 {
     std::vector<T> *vec = new std::vector<T>;
+    vec = postorderHelper(root);
+    return vec;
+}
 
+template<class T>
+std::vector<T> * BST<T>::postorderHelper(Node<T>*node){
+    std::vector<T> *vec = new std::vector<T>;
+    std::vector<T> *templeft = new std::vector<T>;
+    std::vector<T> *tempright = new std::vector<T>;
+    if (node != NULL){
+        if (node -> get_left() != NULL){
+            templeft = postorderHelper(node -> get_left());
+            for (int i = 0; i < templeft -> size(); i++){
+                vec -> push_back(templeft[i]);
+            }
+        }
+        if (node -> get_right() != NULL){
+            tempright = postorderHelper(node -> get_right());
+            for (int i = 0; i < tempright -> size(); i++){
+                vec -> push_back(tempright[i]);
+            }
+        }
+        vec -> push_back(node);
+    }
     return vec;
 }
 
@@ -117,14 +189,13 @@ void BST<T>::insert(T new_data)
             }
         }
     }
+    std::cout << "Inserted: " << new_data << std::endl;
 }
 
 
 template<class T>
 Node<T> *BST<T>::search(T val)
 {
-   // Node<T> result = searchHelper(root, val);
-    //return result;
     Node<T> *current = root;
     while (current != NULL){
         if (current -> get_data() == val){
@@ -141,25 +212,9 @@ Node<T> *BST<T>::search(T val)
 }
 
 template<class T>
-Node<T> *BST<T>::searchHelper(Node<T> current, T searchValue){
-    if (current == NULL){
-        return NULL;
-    }
-    if (searchValue == current -> get_data()){
-        return current;
-    }
-    else if (searchValue < current){
-        searchHelper(current -> get_left(), searchValue);
-    }
-    else if (searchValue > current){
-        searchHelper(current -> get_right(), searchValue);
-    }
-}
-
-
-template<class T>
 void BST<T>::remove(T val)
 {
+    std::cout << "Current: " << val << std::endl;
     Node<T> *current = root;
     Node<T> *prev;
     while (current != NULL){
@@ -177,6 +232,7 @@ void BST<T>::remove(T val)
                 else{
                     prev -> set_right(NULL);
                 }
+                std::cout << "Removed: " << val << std::endl;
             }
             //Value has a left child.
             else if (current -> get_left() != NULL && current -> get_right() == NULL){
@@ -190,6 +246,7 @@ void BST<T>::remove(T val)
                 else{
                     prev -> set_right(current -> get_left());
                 }
+                std::cout << "Removed: " << val << std::endl;
             }
             //Value has a right child.
             else if (current -> get_left() == NULL && current -> get_right() != NULL){
@@ -203,6 +260,7 @@ void BST<T>::remove(T val)
                 else{
                     prev -> set_right(current -> get_right());
                 }
+                std::cout << "Removed: " << val << std::endl;
             }
             //Value has two children. Successor will be leftmost child of right subtree
             else{
@@ -213,7 +271,10 @@ void BST<T>::remove(T val)
                 T successorData = successor -> get_data();
                 remove(successor -> get_data());
                 current -> set_data(successorData);
+                std::cout << "Removed: " << val << std::endl;
+               // std::cout << "Inserted: " << current -> get_data() << std::endl;
             }
+            std::cout << "Current Root: " << root -> get_data() << std::endl;
             return;
         }
         //Search right.
@@ -235,5 +296,6 @@ void BST<T>::remove(T val)
 template<class T>
 int BST<T>::get_size()
 {
-
+    int result = inorder() -> size();
+    return result;
 }
