@@ -189,7 +189,6 @@ void BST<T>::insert(T new_data)
             }
         }
     }
-    std::cout << "Inserted: " << new_data << std::endl;
 }
 
 
@@ -214,7 +213,6 @@ Node<T> *BST<T>::search(T val)
 template<class T>
 void BST<T>::remove(T val)
 {
-    std::cout << "Current: " << val << std::endl;
     Node<T> *current = root;
     Node<T> *prev;
     while (current != NULL){
@@ -232,7 +230,6 @@ void BST<T>::remove(T val)
                 else{
                     prev -> set_right(NULL);
                 }
-                std::cout << "Removed: " << val << std::endl;
             }
             //Value has a left child.
             else if (current -> get_left() != NULL && current -> get_right() == NULL){
@@ -246,7 +243,6 @@ void BST<T>::remove(T val)
                 else{
                     prev -> set_right(current -> get_left());
                 }
-                std::cout << "Removed: " << val << std::endl;
             }
             //Value has a right child.
             else if (current -> get_left() == NULL && current -> get_right() != NULL){
@@ -260,7 +256,6 @@ void BST<T>::remove(T val)
                 else{
                     prev -> set_right(current -> get_right());
                 }
-                std::cout << "Removed: " << val << std::endl;
             }
             //Value has two children. Successor will be leftmost child of right subtree
             else{
@@ -271,10 +266,7 @@ void BST<T>::remove(T val)
                 T successorData = successor -> get_data();
                 remove(successor -> get_data());
                 current -> set_data(successorData);
-                std::cout << "Removed: " << val << std::endl;
-               // std::cout << "Inserted: " << current -> get_data() << std::endl;
             }
-            std::cout << "Current Root: " << root -> get_data() << std::endl;
             return;
         }
         //Search right.
